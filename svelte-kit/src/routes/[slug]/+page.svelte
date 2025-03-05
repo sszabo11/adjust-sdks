@@ -1,7 +1,6 @@
 <script>
 	import Ad from '$lib/Ad.svelte';
 	import Button from '$lib/Button.svelte';
-	import Group from '$lib/Group.svelte';
 </script>
 
 <h1>Welcome to your library project</h1>
@@ -9,17 +8,7 @@
 <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
 
 <div class="ad">
-	<Ad name="meow" region="US" category="Travel" />
-</div>
-
-<div class="ads">
-	<Group name="cats">
-		<Ad group="cats" name="plom" key="1" region="US" category="Travel" />
-	</Group>
-</div>
-
-<div class="ad far">
-	<Ad name="meow" region="US" category="Travel" />
+	<Ad name="slug" region="US" category="Travel" />
 </div>
 
 <Button />
@@ -28,15 +17,5 @@
 	.ad {
 		width: 300px;
 		height: 300px;
-	}
-
-	.ads {
-		width: 300px;
-		height: 300px;
-	}
-
-	.far {
-		position: absolute;
-		left: 200%;
 	}
 </style>

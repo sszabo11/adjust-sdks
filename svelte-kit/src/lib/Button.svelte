@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { handleClick } from 'adjust-core/lib/handleClick.js';
-
 	type Props = {
 		onclick?: () => void;
 	};
@@ -8,7 +6,6 @@
 
 	function Click() {
 		console.log('Svelte things');
-		handleClick();
 		onclick && onclick();
 	}
 </script>
