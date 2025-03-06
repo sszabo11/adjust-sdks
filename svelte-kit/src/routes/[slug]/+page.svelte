@@ -1,6 +1,5 @@
 <script>
 	import Ad from '$lib/Ad.svelte';
-	import Button from '$lib/Button.svelte';
 </script>
 
 <h1>Welcome to your library project</h1>
@@ -10,8 +9,6 @@
 <div class="ad">
 	<Ad name="slug" region="US" category="Travel" />
 </div>
-
-<Button />
 
 <style>
 	.ad {

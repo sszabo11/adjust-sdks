@@ -18,6 +18,7 @@ export function observe(
   props: Props,
   data: any,
   callback: () => void,
+  onerror?: (err: string) => void,
 ) {
   const intersectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(async (entry) => {
@@ -31,11 +32,21 @@ export function observe(
 
         if (!in_viewport) {
           console.log("GEr", element, priority);
-          await inject(
-            { element, priority, in_viewport, env: env, is_dev },
+          let { error } = await inject(
+            {
+              element,
+              priority,
+              in_viewport,
+              api_key: env.PUBLIC_API_KEY,
+              is_dev,
+            },
             props,
             data,
           );
+
+          if (error && onerror) {
+            onerror(error);
+          }
           callback();
           return false;
         }

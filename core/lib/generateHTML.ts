@@ -33,7 +33,7 @@ export function generateHTML(
   root.style.position = "relative";
   root.style.backgroundColor = canvas.fill;
   root.style.borderRadius = px(
-    borderRadius !== undefined ? borderRadius : canvas.borderRadius || 10,
+    borderRadius !== undefined ? borderRadius : canvas.borderRadius || 0,
   );
   root.classList.add("animate__fadeIn");
   root.style.animationDuration = "400ms";

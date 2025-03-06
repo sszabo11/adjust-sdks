@@ -9,17 +9,24 @@ export async function inject(
     priority,
     in_viewport,
     is_dev,
-    env,
+    api_key,
   }: {
     in_viewport: boolean;
     element: HTMLDivElement;
     priority: number;
     is_dev: boolean;
-    env: Record<string, string>;
+    api_key: string;
   },
   { borderRadius, name }: Props,
   data: any,
-) {
+): Promise<{
+  error: string | null;
+  size_id?: number;
+  ad_id?: number;
+  html?: HTMLAnchorElement;
+  ad_unit_id?: number;
+  dimensions?: any;
+}> {
   console.log("Loading ad...", in_viewport, element);
   let {
     error: err,
@@ -33,9 +40,14 @@ export async function inject(
     body: data as any,
     borderRadius: borderRadius || 0,
     priority,
-    env,
+    api_key,
     is_dev: is_dev,
   });
+
+  if (err) {
+    console.log("errerrer", err);
+    return { error: err };
+  }
 
   let error = "";
   console.log(response, err);
@@ -71,5 +83,12 @@ export async function inject(
   loadFonts(fonts);
   await waitForImages(images);
 
-  return { size_id, ad_id, html, ad_unit_id: response.ad_unit_id, dimensions };
+  return {
+    error,
+    size_id,
+    ad_id,
+    html,
+    ad_unit_id: response.ad_unit_id,
+    dimensions,
+  };
 }

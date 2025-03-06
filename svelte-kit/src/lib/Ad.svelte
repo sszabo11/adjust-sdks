@@ -18,7 +18,8 @@
 		check_group,
 		check_viewport,
 		bounce,
-		inject
+		inject,
+		Unit
 	} from 'adjust-core';
 	import ErrorMessage from './error/ErrorMessage.svelte';
 
@@ -53,91 +54,114 @@
 
 	onMount(async () => {
 		requestAnimationFrame(async () => {
-			if (!element) {
-				error = 'No unit element';
-				return;
-			}
-
-			if (!element.parentElement) {
-				error = 'No unit parent element';
-				return;
-			}
-
-			({ warning } = check_env({
-				env_var: env as Record<string, string>,
-				dev,
-				url: $page.url.hostname
-			}));
-
-			({ error, code_error } = check_props(props, {
-				element: element!,
-				container_element
-			}));
-			console.log(error);
-
-			let { ratio, width, height } = get_size({ element, parent: container_element });
-
-			let { is_group, unit_key_name } = check_group(group, props, {
-				container: container_element
-			});
-
-			in_viewport = check_viewport({ container: container_element });
-
-			let pathname = get_pathname({
-				params: $page.params,
-				pathname: $page.url.pathname,
-				pattern: $page.route.id!
-			});
-
-			ad_name = is_group ? unit_key_name : name;
-
-			data = {
-				ad_unit_tag: 'banana',
-				ad_unit_name: ad_name,
-				ad_unit_group: is_group ? group : null,
-				ad_unit_type: is_group && group ? 'group' : 'page',
+			let data = {
+				name,
+				group,
 				key,
+				is_dev: dev,
+				api_key: env.PUBLIC_ADJUST_KEY,
 				in_viewport,
-				endpoint: pathname,
-				tags: tags ?? ['gym', 'equipment', 'fitness'],
-				category: category ?? 'Educational Toys',
-				region: region ?? 'JP',
-				context,
-				language: 'fr',
-				gender: 'any',
-				ratio,
-				fill: fill ?? '',
-				width: width,
-				height: height
+				priority,
+				element: element!,
+				path: $page.url.pathname
 			};
+			console.log('element', element?.getBoundingClientRect());
+			let unit = new Unit(data, props);
 
-			if (!priority) {
-				priority = in_viewport ? 3 : 0;
-			}
+			let { new_element } = await unit.load(props, element!);
 
-			if (in_viewport) {
-				({ error } = await inject(
-					{ element, priority, in_viewport, env: env, is_dev: dev },
-					props,
-					data
-				));
-			}
-
-			if (in_viewport) {
+			console.log('fwe', new_element, unit.in_viewport);
+			if (new_element) {
+				element!.appendChild(new_element);
 				loading = false;
 			}
+			//if (!element) {
+			//	error = 'No unit element';
+			//	return;
+			//}
+
+			//if (!element.parentElement) {
+			//	error = 'No unit parent element';
+			//	return;
+			//}
+
+			//({ warning } = check_env({
+			//	env_var: env as Record<string, string>,
+			//	dev,
+			//	url: $page.url.hostname
+			//}));
+
+			//({ error, code_error } = check_props(props, {
+			//	element: element!,
+			//	container_element
+			//}));
+			//console.log(error);
+
+			//let { ratio, width, height } = get_size({ element, parent: container_element });
+
+			//let { is_group, unit_key_name } = check_group(group, props, {
+			//	container: container_element
+			//});
+
+			//in_viewport = check_viewport({ container: container_element });
+
+			//let pathname = get_pathname({
+			//	params: $page.params,
+			//	pathname: $page.url.pathname,
+			//	pattern: $page.route.id!
+			//});
+
+			//ad_name = is_group ? unit_key_name : name;
+
+			//data = {
+			//	ad_unit_tag: 'banana',
+			//	ad_unit_name: ad_name,
+			//	ad_unit_group: is_group ? group : null,
+			//	ad_unit_type: is_group && group ? 'group' : 'page',
+			//	key,
+			//	in_viewport,
+			//	endpoint: pathname,
+			//	tags: tags ?? ['gym', 'equipment', 'fitness'],
+			//	category: category ?? 'Educational Toys',
+			//	region: region ?? 'JP',
+			//	context,
+			//	language: 'fr',
+			//	gender: 'any',
+			//	ratio,
+			//	fill: fill ?? '',
+			//	width: width,
+			//	height: height
+			//};
+
+			//if (!priority) {
+			//	priority = in_viewport ? 3 : 0;
+			//}
+
+			//if (in_viewport) {
+			//	({ error } = await inject(
+			//		{ element, priority, in_viewport, env: env as any, is_dev: dev },
+			//		props,
+			//		data
+			//	));
+			//}
 
 			// TODO: detach intersection observer after ad comes into viewport
-			if (!in_viewport) {
-				observe({ in_viewport, is_dev: dev, env, element }, props, data, () => {
-					console.log('set in viewport');
-					in_viewport = true;
-					loading = false;
-				});
-			}
+			//if (!in_viewport) {
+			//	observe(
+			//		{ in_viewport, is_dev: dev, env: env as any, element, priority },
+			//		props,
+			//		data,
+			//		() => {
+			//			console.log('set in viewport');
+			//			in_viewport = true;
+			//			loading = false;
+			//		},
+			//		(err: string) => (error = err)
+			//	);
+			//}
 		});
 
-		bounce(page_time);
+		bounce(page_time!);
 		console.log('end mount');
 	});
 

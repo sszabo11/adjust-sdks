@@ -22,13 +22,13 @@ export async function display({
   body,
   borderRadius,
   priority,
-  env,
+  api_key,
   is_dev,
 }: {
   body: Body;
   borderRadius: number;
   priority: number;
-  env: Record<string, string>;
+  api_key: string;
   is_dev: boolean;
 }): Promise<{
   error: string | null;
@@ -55,7 +55,6 @@ export async function display({
     };
   }
 
-  let api_key = env.PUBLIC_ADJUST_KEY;
   // Query ad with body
   const response: Request = (await query_ad(
     body,
