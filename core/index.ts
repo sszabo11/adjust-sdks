@@ -5,6 +5,5 @@ export * from "./lib/server.js";
 export * from "./lib/types.js";
 export * from "./lib/check/index.js";
 export * from "./lib/utils/index.js";
-export * from "./lib/inject.js";
 export * from "./lib/bounce.js";
 export * from "./lib/main.js";

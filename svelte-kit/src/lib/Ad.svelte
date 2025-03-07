@@ -1,48 +1,24 @@
 <script lang="ts">
 	import 'animate.css';
 	import { getContext, onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { browser, dev } from '$app/environment';
 	import { fade, slide } from 'svelte/transition';
 	import { env } from '$env/dynamic/public';
 	import Spinner from './loaders/Spinner.svelte';
-	import {
-		server_url,
-		type Props,
-		type AdData,
-		check_env,
-		observe,
-		check_props,
-		get_pathname,
-		get_size,
-		check_group,
-		check_viewport,
-		bounce,
-		inject,
-		Unit
-	} from 'adjust-core';
+	import { type Props, bounce, Unit, type Data } from 'adjust-core';
 	import ErrorMessage from './error/ErrorMessage.svelte';
-
-	let server_click = server_url({
-		prod: '/click/click',
-		dev: '/click/click/click/click',
-		is_dev: dev
-	});
+	import { page } from '$app/state';
 
 	let props: Props = $props();
 
 	let { name, key, group, region, fill, priority, category, context, tags, borderRadius } = props;
 
-	let container_element: HTMLDivElement;
 	let element: HTMLDivElement | null = $state(null);
 
 	let ad_unit_id: number | undefined = $state(undefined);
 	let ad_name = $state('');
 
-	let data: AdData = $state(null);
-
 	let page_time: number | undefined = undefined;
-	let ad_dimensions = $state({ width: 0, height: 0 });
 
 	let error: string | null = $state(null);
 	let code_error: string | null = $state(null);
@@ -54,119 +30,47 @@
 
 	onMount(async () => {
 		requestAnimationFrame(async () => {
-			let data = {
+			let data: Data = {
 				name,
-				group,
-				key,
+				group: group || null,
+				key: key || null,
 				is_dev: dev,
 				api_key: env.PUBLIC_ADJUST_KEY,
 				in_viewport,
 				priority,
 				element: element!,
-				path: $page.url.pathname
+				path: page.url.pathname
 			};
-			console.log('element', element?.getBoundingClientRect());
 			let unit = new Unit(data, props);
 
-			let { new_element } = await unit.load(props, element!);
+			let errors = unit.get_errors();
 
-			console.log('fwe', new_element, unit.in_viewport);
+			if (errors.length > 0) {
+				error = errors[0];
+			}
+
+			let { new_element, error: load_err } = await unit.load();
+			if (load_err) {
+				error = load_err;
+			}
+
+			ad_name = group ?? name;
+
 			if (new_element) {
 				element!.appendChild(new_element);
 				loading = false;
 			}
-			//if (!element) {
-			//	error = 'No unit element';
-			//	return;
-			//}
 
-			//if (!element.parentElement) {
-			//	error = 'No unit parent element';
-			//	return;
-			//}
-
-			//({ warning } = check_env({
-			//	env_var: env as Record<string, string>,
-			//	dev,
-			//	url: $page.url.hostname
-			//}));
-
-			//({ error, code_error } = check_props(props, {
-			//	element: element!,
-			//	container_element
-			//}));
-			//console.log(error);
-
-			//let { ratio, width, height } = get_size({ element, parent: container_element });
-
-			//let { is_group, unit_key_name } = check_group(group, props, {
-			//	container: container_element
-			//});
-
-			//in_viewport = check_viewport({ container: container_element });
-
-			//let pathname = get_pathname({
-			//	params: $page.params,
-			//	pathname: $page.url.pathname,
-			//	pattern: $page.route.id!
-			//});
-
-			//ad_name = is_group ? unit_key_name : name;
-
-			//data = {
-			//	ad_unit_tag: 'banana',
-			//	ad_unit_name: ad_name,
-			//	ad_unit_group: is_group ? group : null,
-			//	ad_unit_type: is_group && group ? 'group' : 'page',
-			//	key,
-			//	in_viewport,
-			//	endpoint: pathname,
-			//	tags: tags ?? ['gym', 'equipment', 'fitness'],
-			//	category: category ?? 'Educational Toys',
-			//	region: region ?? 'JP',
-			//	context,
-			//	language: 'fr',
-			//	gender: 'any',
-			//	ratio,
-			//	fill: fill ?? '',
-			//	width: width,
-			//	height: height
-			//};
-
-			//if (!priority) {
-			//	priority = in_viewport ? 3 : 0;
-			//}
-
-			//if (in_viewport) {
-			//	({ error } = await inject(
-			//		{ element, priority, in_viewport, env: env as any, is_dev: dev },
-			//		props,
-			//		data
-			//	));
-			//}
-
-			// TODO: detach intersection observer after ad comes into viewport
-			//if (!in_viewport) {
-			//	observe(
-			//		{ in_viewport, is_dev: dev, env: env as any, element, priority },
-			//		props,
-			//		data,
-			//		() => {
-			//			console.log('set in viewport');
-			//			in_viewport = true;
-			//			loading = false;
-			//		},
-			//		(err: string) => (error = err)
-			//	);
-			//}
+			if (!unit.in_viewport) {
+				unit.observe(
+					() => (loading = false),
+					(err: string) => (error = err)
+				);
+			}
 		});
 
 		bounce(page_time!);
-		console.log('end mount');
 	});
-
-	let details = $state(null);
-	let show_details = $state(false);
 
 	function setTimer() {
 		page_time = performance.now();
@@ -189,7 +93,6 @@
 	id="ad-unit"
 	class="ad-unit"
 	data-ad-unit-id={ad_unit_id}
-	bind:this={container_element}
 >
 	{#if error}
 		<ErrorMessage {error} {code_error} />
@@ -203,12 +106,6 @@
 		{:else}
 			<Spinner />
 		{/if}
-	{:else if show_details}
-		<h2>Requested</h2>
-		<pre>{JSON.stringify({}, null, 4)}</pre>
-
-		<h2>Results</h2>
-		<pre>{JSON.stringify(details, null, 4)}</pre>
 	{/if}
 	<div class="ad-container">
 		<div
@@ -223,11 +120,7 @@
 			bind:this={element}
 		>
 			{#if dev && hover}
-				<div
-					in:slide={{ axis: 'x', duration: 300 }}
-					style="right: calc(5px - {ad_dimensions.width - element.getBoundingClientRect().width}px)"
-					class="name"
-				>
+				<div in:slide={{ axis: 'x', duration: 300 }} class="name">
 					<span>{ad_name}</span>
 				</div>
 			{/if}
@@ -282,6 +175,7 @@
 	.name .ad-container {
 		width: 100%;
 		height: 100%;
+		z-index: 999;
 	}
 
 	.name span {
@@ -293,6 +187,9 @@
 	.ad-container {
 		width: 100%;
 		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 
 	pre {

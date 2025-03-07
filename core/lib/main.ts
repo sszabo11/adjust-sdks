@@ -1,5 +1,4 @@
 import { check_viewport } from "./check/viewport.js";
-import { display } from "./display.js";
 import { generateHTML } from "./generateHTML.js";
 import { waitForImages } from "./helpers/waitForImages.js";
 import { scheduler } from "./schedular.js";
@@ -7,18 +6,16 @@ import { server_url } from "./server.js";
 import { Props } from "./types.js";
 import { findFonts, loadFonts } from "./utils/fonts.js";
 
-interface Data {
+export interface Data {
   name: string;
-  group: string;
-  key: string;
+  group: string | null;
+  key: string | null;
   is_dev: boolean;
   api_key: string | undefined;
   in_viewport: boolean;
   priority?: number;
   element: HTMLDivElement;
   path: string;
-  width: number;
-  height: number;
 }
 
 export class Unit {
@@ -48,7 +45,10 @@ export class Unit {
     this.parent = data.element.parentElement as HTMLDivElement;
     this.element = data.element;
     this.path = data.path;
-    this.in_viewport = check_viewport({ container: data.element });
+    this.in_viewport = check_viewport({
+      container: this.parent,
+      name: this.group ?? this.name,
+    });
     this.errors = [];
     this.props = props;
 
@@ -90,8 +90,8 @@ export class Unit {
 
         let index_of_element = group_element
           ? Array.from(group_element.children).findIndex(
-            (e) => e === group_element,
-          )
+              (e) => e === group_element,
+            )
           : -1;
         group_tag += `${group_element.tagName}-${Array.from(group_element.classList).join("")}-${group_element.id}-${index_of_element}`;
 
@@ -146,14 +146,12 @@ export class Unit {
   }
 
   async fetch() {
-    let error: null | string = null;
-
     console.log("ratio", this.ratio);
     // Check if ratio exists
     if (isNaN(this.ratio) || !isFinite(this.ratio)) {
-      error = "Please specify width and height";
+      this.errors.push("Please specify width and height");
       return {
-        error,
+        error: "Please specify width and height",
         html: undefined,
         response: undefined,
         new: undefined,
@@ -168,6 +166,7 @@ export class Unit {
 
     if (response.error) {
       console.log(response);
+      this.errors.push(response.error);
       return {
         error: response.error,
         html: undefined,
@@ -179,6 +178,7 @@ export class Unit {
 
     let data = response.data;
     if (!data) {
+      this.errors.push("Something went wrong");
       return {
         error: "Something went wrong",
         html: undefined,
@@ -221,7 +221,7 @@ export class Unit {
     ) as any;
 
     return {
-      error,
+      error: this.errors[0],
       html,
       response,
       elements: data.ad,
@@ -260,20 +260,13 @@ export class Unit {
     return data;
   }
 
-  async load(props: Props, element: HTMLDivElement) {
-    console.log(
-      "in viewport",
-      this.in_viewport,
-      this.name,
-      check_viewport({ container: this.element }),
-    );
-
+  async load() {
     if (this.in_viewport) {
-      let { html } = await this.inject();
+      let { html, error } = await this.inject();
 
-      return { new_element: html };
+      return { new_element: html, error };
     }
-    return { new_element: null };
+    return { new_element: null, error: null };
   }
 
   async inject() {
@@ -289,18 +282,23 @@ export class Unit {
     } = await this.fetch();
 
     if (err) {
+      this.errors.push(err);
       console.log("errerrer", err);
       return { error: err };
     }
 
-    let error = "";
     console.log(response, err);
 
     if (err && err.includes("api key does not exist")) {
+      this.errors.push(
+        `API key does not exist. View your API keys at https://adjustv4.vercel.app/site/dashboard/keys`,
+      );
       return {
         error: `API key does not exist. View your API keys at https://adjustv4.vercel.app/site/dashboard/keys`,
       };
     }
+
+    let error = "";
 
     if (
       err &&
@@ -308,13 +306,21 @@ export class Unit {
         'duplicate key value violates unique constraint "uq_ad_unit"',
       )
     ) {
+      this.errors.push(
+        'duplicate key value violates unique constraint "uq_ad_unit"',
+      );
       return { error: `Ad units do not have unique names: ${this.name}` };
     }
 
-    let server_click = "/";
+    let server_click = server_url({
+      prod: "/click/click",
+      dev: "/click/click/click/click",
+      is_dev: this.is_dev,
+    });
     if (err) {
       console.error("query error", err);
       error = err;
+      this.errors.push(err);
     } else if (html) {
       html.href = this.is_dev
         ? ""
@@ -337,6 +343,28 @@ export class Unit {
       ad_unit_id: response.ad_unit_id,
       dimensions,
     };
+  }
+
+  observe(callback: () => void, onerror: (err: string) => void) {
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(async (entry) => {
+        if (entry.isIntersecting) {
+          if (!this.in_viewport) {
+            console.log("GEr", this.element, this.priority);
+            let { error } = await this.inject();
+
+            if (error && onerror) {
+              onerror(error);
+            }
+            callback();
+            return false;
+          }
+        } else {
+          console.log("Element is out of the viewport!", entry);
+        }
+      });
+    });
+    intersectionObserver.observe(this.element.parentElement!);
   }
 }
 

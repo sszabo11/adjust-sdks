@@ -11,9 +11,9 @@ export function findFonts(elements: EditorElement[]) {
 }
 
 export function loadFonts(fonts: string[]) {
-  //WebFont.load({
-  //  google: {
-  //    families: fonts,
-  //  },
-  //});
+  (window as any).WebFont.load({
+    google: {
+      families: fonts,
+    },
+  });
 }
