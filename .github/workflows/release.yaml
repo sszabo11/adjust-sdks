@@ -5,7 +5,10 @@ on:
     branches:
       - main
     paths:
-      - '/**'
+      - 'cdn/**'
+      - 'svelte/**'
+      - 'react/**'
+      - 'core/**'
 
 jobs:
   release:
