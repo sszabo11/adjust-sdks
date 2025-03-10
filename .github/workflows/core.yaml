@@ -16,7 +16,7 @@ jobs:
       - name: Build and Deploy
         run: |
           cd cdn
-          echo "Deploying package-a (add your deployment logic here)"
+          echo "Deploying core"
           npm run build
           npm publish
           npm 
