@@ -95,15 +95,12 @@ export interface Canvas {
 }
 
 export type Props = {
-  name: string;
-  group?: string;
-  region?: string;
-  category?: string;
-  tags?: string[];
+  name?: string;
   borderRadius?: number;
   key?: string;
-  context?: string[];
+  context?: string | string[];
   priority?: number;
+  disabled?: boolean;
   fill?: "width" | "height";
 };
 

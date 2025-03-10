@@ -10,7 +10,7 @@
 </script>
 
 {#if name}
-	<div class="group-ads" data-group-name={name}>
+	<div class="group-ads" id="adjust-group" data-group-name={name}>
 		{@render children()}
 	</div>
 {:else}

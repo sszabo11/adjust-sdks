@@ -1,0 +1,22 @@
+name: Deploy core library
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'core/**'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and Deploy
+        run: |
+          cd cdn
+          echo "Deploying package-a (add your deployment logic here)"
+          npm run build
+          npm publish
+          npm 

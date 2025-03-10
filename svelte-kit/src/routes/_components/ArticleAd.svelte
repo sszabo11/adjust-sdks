@@ -3,13 +3,11 @@
 	import { onMount } from 'svelte';
 
 	type Props = {
-		name: string;
 		key: string;
-		group: string;
 		priority?: number;
 	};
 
-	let { name, key, group, priority }: Props = $props();
+	let { key, priority }: Props = $props();
 
 	onMount(() => {
 		console.log('article mount');
@@ -18,7 +16,7 @@
 
 <div class="article">
 	<div class="ad">
-		<Ad name="w" {group} {priority} {key} category="Travel" region="US" borderRadius={0} />
+		<Ad {priority} {key} category="Travel" region="US" borderRadius={0} />
 	</div>
 	<span>Promoted content</span>
 </div>

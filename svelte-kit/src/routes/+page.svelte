@@ -1,9 +1,20 @@
-<script>
+<script lang="ts">
 	import Ad from '$lib/Ad.svelte';
+	import { disableAds } from '$lib/disable.js';
 	import Group from '$lib/Group.svelte';
 	import { articles } from './_articles.js';
 	import Article from './_components/Article.svelte';
 	import ArticleAd from './_components/ArticleAd.svelte';
+
+	let { data } = $props();
+	let show_reward_ad = $state(false);
+
+	$inspect(show_reward_ad);
+
+	function showReward() {
+		console.log('rewars');
+		show_reward_ad = true;
+	}
 </script>
 
 <h1>Welcome to your library project</h1>
@@ -11,12 +22,12 @@
 <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
 
 <div class="ad">
-	<Ad name="meow" region="US" category="Cooking" />
+	<Ad name="meow" region="US" category="Cooking" context={'Why hats are so important?'} />
 </div>
 
 <div class="ads">
 	<Group name="cats">
-		<Ad group="cats" name="plom" key="1" region="US" category="Travel" />
+		<Ad key="1" region="US" category="Travel" />
 	</Group>
 </div>
 
@@ -32,7 +43,7 @@
 		<Group name="trending">
 			{#each articles.sort(() => Math.random() - 0.5) as article, i}
 				{#if i % 5 === 0}
-					<ArticleAd priority={5} group="trending" key={(i / 5 + 1).toString()} name="" />
+					<ArticleAd priority={5} key={(i / 5 + 1).toString()} />
 				{/if}
 				<Article {...article} />
 			{/each}
@@ -85,5 +96,22 @@
 	section h4 {
 		font-size: 24px;
 		font-weight: 400;
+	}
+
+	.reward {
+		display: flex;
+		gap: 30px;
+	}
+
+	.reward button {
+		background-color: #ffffff12;
+		border: none;
+		border-radius: 100px;
+		font: 'Inter';
+		display: block;
+		cursor: pointer;
+		padding: 12px 18px;
+		color: white;
+		height: min-content;
 	}
 </style>

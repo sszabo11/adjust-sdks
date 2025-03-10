@@ -1,8 +1,8 @@
 <script lang="ts">
 	import 'animate.css';
 	import { getContext, onMount } from 'svelte';
-	import { browser, dev } from '$app/environment';
-	import { fade, slide } from 'svelte/transition';
+	import { dev } from '$app/environment';
+	import { slide } from 'svelte/transition';
 	import { env } from '$env/dynamic/public';
 	import Spinner from './loaders/Spinner.svelte';
 	import { type Props, bounce, Unit, type Data } from 'adjust-core';
@@ -11,7 +11,7 @@
 
 	let props: Props = $props();
 
-	let { name, key, group, region, fill, priority, category, context, tags, borderRadius } = props;
+	let { name, key, disabled, priority } = props;
 
 	let element: HTMLDivElement | null = $state(null);
 
@@ -26,14 +26,23 @@
 
 	let in_viewport = $state(false);
 	let loader: string = getContext('ad_loader');
-	let loading = $state(true);
+	let loading = $state(false);
 
 	onMount(async () => {
+		Adjust.main();
+		let path = page.url.pathname;
+		let context_key = `disabled:${path}`;
+		let page_disabled = getContext(context_key);
+		if (disabled || page_disabled) {
+			loading = false;
+			return;
+		}
+		loading = true;
+
 		requestAnimationFrame(async () => {
 			let data: Data = {
-				name,
-				group: group || null,
-				key: key || null,
+				name: name ?? null,
+				key: key ?? null,
 				is_dev: dev,
 				api_key: env.PUBLIC_ADJUST_KEY,
 				in_viewport,
@@ -45,6 +54,7 @@
 
 			let errors = unit.get_errors();
 
+			console.log('errors ad ', errors);
 			if (errors.length > 0) {
 				error = errors[0];
 			}
@@ -54,7 +64,7 @@
 				error = load_err;
 			}
 
-			ad_name = group ?? name;
+			ad_name = unit.get_unit_name();
 
 			if (new_element) {
 				element!.appendChild(new_element);
@@ -84,49 +94,52 @@
 
 <svelte:head>
 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+	<script src="https://ad-unit-cdn.s3.us-east-1.amazonaws.com/index.js"></script>
 </svelte:head>
-<div
-	onclick={setTimer}
-	onkeydown={() => {}}
-	role="button"
-	tabindex="-1"
-	id="ad-unit"
-	class="ad-unit"
-	data-ad-unit-id={ad_unit_id}
->
-	{#if error}
-		<ErrorMessage {error} {code_error} />
-	{:else if warning}
-		<div class="warning-container">
-			<span class="warning">Warning: {warning}</span>
-		</div>
-	{:else if loading}
-		{#if loader === 'spinner'}
-			<Spinner />
-		{:else}
-			<Spinner />
-		{/if}
-	{/if}
-	<div class="ad-container">
-		<div
-			class="ad"
-			aria-label="Ad"
-			onfocus={() => {}}
-			class:hide={loading}
-			role="link"
-			tabindex="-1"
-			onmouseover={dev ? () => setHover(true) : null}
-			onmouseleave={dev ? () => setHover(false) : null}
-			bind:this={element}
-		>
-			{#if dev && hover}
-				<div in:slide={{ axis: 'x', duration: 300 }} class="name">
-					<span>{ad_name}</span>
-				</div>
+{#if !disabled}
+	<div
+		onclick={setTimer}
+		onkeydown={() => {}}
+		role="button"
+		tabindex="-1"
+		id="ad-unit"
+		class="ad-unit"
+		data-ad-unit-id={ad_unit_id}
+	>
+		{#if error}
+			<ErrorMessage {error} {code_error} />
+		{:else if warning}
+			<div class="warning-container">
+				<span class="warning">Warning: {warning}</span>
+			</div>
+		{:else if loading}
+			{#if loader === 'spinner'}
+				<Spinner />
+			{:else}
+				<Spinner />
 			{/if}
+		{/if}
+		<div class="ad-container">
+			<div
+				class="ad"
+				aria-label="Ad"
+				onfocus={() => {}}
+				class:hide={loading}
+				role="link"
+				tabindex="-1"
+				onmouseover={dev ? () => setHover(true) : null}
+				onmouseleave={dev ? () => setHover(false) : null}
+				bind:this={element}
+			>
+				{#if dev && hover}
+					<div in:slide={{ axis: 'x', duration: 300 }} class="name">
+						<span>{ad_name}</span>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');

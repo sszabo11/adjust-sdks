@@ -7,8 +7,7 @@ import { Props } from "./types.js";
 import { findFonts, loadFonts } from "./utils/fonts.js";
 
 export interface Data {
-  name: string;
-  group: string | null;
+  name: string | null;
   key: string | null;
   is_dev: boolean;
   api_key: string | undefined;
@@ -36,9 +35,20 @@ export class Unit {
   props: Props;
 
   constructor(data: Data, props: Props) {
+    this.errors = [];
     this.name = data.name;
-    this.group = data.group;
     this.key = data.key;
+    this.group = this.check_group(data.element);
+    console.log("group", this.group);
+
+    if (!this.name && !this.group) {
+      this.errors.push("No name or group provided");
+    }
+
+    if (this.group && !this.key) {
+      this.errors.push("No key provided for group");
+    }
+
     this.is_dev = data.is_dev;
     this.api_key = data.api_key;
     this.priority = data.priority ?? 1;
@@ -49,7 +59,6 @@ export class Unit {
       container: this.parent,
       name: this.group ?? this.name,
     });
-    this.errors = [];
     this.props = props;
 
     let { width, height, ratio } = this.get_size(this.element);
@@ -59,8 +68,36 @@ export class Unit {
     this.ratio = ratio;
   }
 
+  check_group(element: HTMLDivElement) {
+    let currentElement: HTMLElement = element.parentElement;
+    let group: string | null = null;
+
+    console.log(currentElement.nodeName);
+    while (currentElement && (!group || currentElement.nodeName !== "BODY")) {
+      if (
+        currentElement.id === "adjust-group" &&
+        currentElement.dataset.groupName &&
+        currentElement.nodeName === "DIV"
+      ) {
+        group = currentElement.dataset.groupName;
+        break;
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    return group;
+  }
+
   get_errors() {
     return this.errors;
+  }
+
+  get_unit_name() {
+    return this.name ?? this.group + "-" + this.key;
+  }
+
+  has_errors() {
+    return this.errors.length > 0;
   }
 
   get_size(element: HTMLDivElement) {
@@ -117,7 +154,26 @@ export class Unit {
   }
 
   analyze() {
+    const articleText = Array.from(
+      document.querySelectorAll("p, h1, h2, h3, h4, h5"),
+    )
+      .map((p) => p.textContent.trim())
+      .join(" ");
+
+    console.log("A", articleText);
+
+    return articleText;
+  }
+
+  package() {
     let { is_group, unit_key_name } = this.get_group();
+
+    let context =
+      (this.props.context &&
+        this.props.context.length > 0 &&
+        this.props.context) ??
+      this.analyze();
+
     let data = {
       ...this.props,
       ad_unit_tag: "banana",
@@ -127,11 +183,9 @@ export class Unit {
       key: this.key,
       in_viewport: this.in_viewport,
       endpoint: this.path,
-      tags: this.props.tags ?? ["gym", "equipment", "fitness"],
-      category: this.props.category ?? "Educational Toys",
-
-      region: this.props.region ?? "JP",
-      context: this.props.context,
+      category: "Educational Toys",
+      region: "US",
+      context,
       language: "fr",
       gender: "any",
       ratio: this.ratio,
@@ -146,7 +200,11 @@ export class Unit {
   }
 
   async fetch() {
-    console.log("ratio", this.ratio);
+    if (this.has_errors()) {
+      return { error: this.errors[0] };
+    }
+
+    console.log(this.get_unit_name, this.errors);
     // Check if ratio exists
     if (isNaN(this.ratio) || !isFinite(this.ratio)) {
       this.errors.push("Please specify width and height");
@@ -159,7 +217,7 @@ export class Unit {
       };
     }
 
-    let body = this.analyze();
+    let body = this.package();
 
     // Query ad with body
     const response: any = await this.query(body);
@@ -369,7 +427,6 @@ export class Unit {
 }
 
 export type Body = {
-  tags: string[];
   category: string;
   region: string;
   language: string;
