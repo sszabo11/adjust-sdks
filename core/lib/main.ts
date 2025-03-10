@@ -37,6 +37,7 @@ export class Unit {
   constructor(data: Data, props: Props) {
     this.errors = [];
     this.name = data.name;
+
     this.key = data.key;
     this.group = this.check_group(data.element);
     console.log("group", this.group);
