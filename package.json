@@ -4,7 +4,7 @@
   "main": "index.js",
   "workspaces": [
     "cdn",
-    "svelte",
+    "svelte-kit",
     "react",
     "core"
   ],
