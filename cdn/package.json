@@ -6,7 +6,7 @@
   "module": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "nx build -c",
+    "build": "rollup -c",
     "deploy": "tsx scripts/deploy.ts"
   },
   "exports": {
