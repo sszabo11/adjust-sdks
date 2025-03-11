@@ -8,7 +8,7 @@ export type Animation = {
 
 export const animations = {
   fade: (options: Animation) => {
-    console.log("ddeccccc", options);
+    console.log("ddeccccd", options);
     return `animate__fade${mappings[options.transition]}${mappings[options.direction]}`;
   },
   slide: (options: Animation) => {
