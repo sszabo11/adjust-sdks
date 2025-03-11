@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4lerna changed --all
         with:
           fetch-depth: 0
 
@@ -35,6 +35,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npx lerna list
+          echo "bark"
           git diff --name-only origin/main HEAD
+          echo "meow"
           npx lerna exec --since origin/main --loglevel verbose -- npx semantic-release
 
