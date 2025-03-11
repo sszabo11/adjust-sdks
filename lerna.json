@@ -1,0 +1,11 @@
+{
+  "packages": [
+    "cdn",
+    "core",
+    "svelte-kit",
+    "react"
+  ],
+  "version": "independent",
+  "npmClient": "npm",
+  "useWorkspaces": true
+}

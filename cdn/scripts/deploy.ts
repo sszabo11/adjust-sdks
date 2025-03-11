@@ -13,7 +13,7 @@ const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 async function deploy() {
   console.log("accessKeyId", accessKeyId);
-  console.log("secretAccessKey", secretAccessKey);
+  console.log("secretAccessKeyy", secretAccessKey);
   //if (!accessKeyId || !secretAccessKey) {
   //  console.error("Invalid credentials");
   //  return;
