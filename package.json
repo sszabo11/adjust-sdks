@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "cdn",
-    "svelte-kit",
-    "react",
-    "core"
+    "cdn/*",
+    "svelte-kit/*",
+    "react/*",
+    "core/*"
   ],
   "repository": {
     "type": "git",
