@@ -8,8 +8,8 @@ import {
 
 import { fromEnv } from "@aws-sdk/credential-providers";
 
-const accessKeyId = process.env.ACCESS_KEY_ID;
-const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 async function deploy() {
   console.log("accessKeyId", accessKeyId);
