@@ -8,7 +8,29 @@
       [
         "@semantic-release/npm",
         {
-          "npmPublish": true
+          "npmPublish": false,
+          "pkgRoot": "cdn"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true,
+          "pkgRoot": "svelte"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true,
+          "pkgRoot": "react"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true,
+          "pkgRoot": "core"
         }
       ],
       [
