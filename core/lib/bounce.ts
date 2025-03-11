@@ -6,7 +6,7 @@ export function bounce(page_time: number) {
       let duration = performance.now() - page_time;
       console.log("Bounce time: ", duration.toFixed(2), "ms");
     } else {
-      console.log("tab is inactive");
+      console.log("tab is inactivee");
     }
   });
   console.info(performance.navigation.type);
