@@ -6,10 +6,14 @@ import {
   S3ServiceException,
 } from "@aws-sdk/client-s3";
 
+import { fromEnv } from "@aws-sdk/credential-providers";
+
 const accessKeyId = process.env.ACCESS_KEY_ID;
 const secretAccessKey = process.env.SECRET_ACCESS_KEY;
 
 async function deploy() {
+  console.log("accessKeyId", accessKeyId);
+  console.log("secretAccessKey", secretAccessKey);
   //if (!accessKeyId || !secretAccessKey) {
   //  console.error("Invalid credentials");
   //  return;
@@ -17,6 +21,7 @@ async function deploy() {
 
   const client = new S3Client({
     region: "us-east-1",
+    credentials: fromEnv(),
   });
 
   const command = new PutObjectCommand({
