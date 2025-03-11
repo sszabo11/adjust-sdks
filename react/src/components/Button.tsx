@@ -8,7 +8,7 @@ interface ButtonProps {
 
 export default function Button({ onClick, children }: ButtonProps) {
   function Click() {
-    console.log("reactt");
+    console.log("reacttt");
     handleClick();
     onClick && onClick();
   }
