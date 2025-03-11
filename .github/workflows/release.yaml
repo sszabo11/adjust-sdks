@@ -35,5 +35,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npx lerna list
+          git diff --name-only origin/main HEAD
           npx lerna exec --since origin/main --loglevel verbose -- npx semantic-release
 
