@@ -34,7 +34,7 @@ async function deploy() {
     const response = await client.send(command);
     if (response.$metadata.httpStatusCode === 200) {
       console.log("Deployed code!!!!!!!!");
-      console.log("Ver")
+      console.log("dVer")
     }
   } catch (caught) {
     if (
