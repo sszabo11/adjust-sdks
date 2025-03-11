@@ -28,5 +28,17 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "tslib": "^2.8.1",
     "typescript": "^5.8.2"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "semantic-release-monorepo"
+    ]
   }
 }

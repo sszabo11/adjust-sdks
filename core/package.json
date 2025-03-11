@@ -22,5 +22,17 @@
   "devDependencies": {
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "semantic-release-monorepo"
+    ]
   }
 }

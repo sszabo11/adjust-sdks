@@ -34,5 +34,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npx lerna exec --since origin/main -- npx semantic-release
+          npx lerna exec --since origin/main --loglevel verbose -- npx semantic-release
 
