@@ -1,6 +1,6 @@
 {
   "name": "adjust-svelte-test",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run prepack",
