@@ -29,7 +29,6 @@
 	let loading = $state(false);
 
 	onMount(async () => {
-		Adjust.main();
 		let path = page.url.pathname;
 		let context_key = `disabled:${path}`;
 		let page_disabled = getContext(context_key);
