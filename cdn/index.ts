@@ -7,7 +7,7 @@ export function main() {
     document.querySelectorAll("#ad-unit");
 
   adUnits.forEach((unit) => {
-    console.log("cunrtict", unit);
+    console.log("cunrtic", unit);
     console.log("ad unit id: ", unit.dataset.adUnitId);
   });
 }
