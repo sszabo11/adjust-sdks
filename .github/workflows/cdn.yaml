@@ -1,0 +1,19 @@
+name: Deploy CDN Package
+
+on:
+  push:
+    branches: [main]
+    paths: ['cdn/**']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
