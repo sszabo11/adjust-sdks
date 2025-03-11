@@ -16,7 +16,7 @@
         "@semantic-release/npm",
         {
           "npmPublish": true,
-          "pkgRoot": "svelte"
+          "pkgRoot": "svelte-kit"
         }
       ],
       [

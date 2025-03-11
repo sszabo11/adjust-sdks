@@ -29,4 +29,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # Optional for npm publish
 
-
+  deploy-cdn:
+    needs: release
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].message, 'cdn')  # Only run if cdn is in commit
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Build and Deploy CDN
+        run: |
+          cd cdn
+          npm run build  
+          npm run deploy
