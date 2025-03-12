@@ -29,11 +29,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Changed Packages
-        run: npx lerna run build --since origin/main --loglevel verbose
+      - run: npx nx affected --target=test --parallel --max-parallel=3  # Tests changed packages
+      - run: npx nx affected --target=build --parallel --max-parallel=3  # Builds changed packages
+      - run: npx nx affected --target=deploy --parallel --max-parallel=3  # Deploys changed packages
 
-      - name: Deploy Changed Packages
-        run: npx lerna run deploy --since origin/main --loglevel verbose
+      # - name: Build Changed Packages
+      #   run: npx lerna run build --since origin/main --loglevel verbose
+
+      # - name: Deploy Changed Packages
+      #   run: npx lerna run deploy --since origin/main --loglevel verbose
 
 
 #      - name: Publish Changed Packages
