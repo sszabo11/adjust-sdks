@@ -8,6 +8,6 @@ export function main() {
 
   adUnits.forEach((unit) => {
     console.log("unicr", unit);
-    console.log("ad unittt idd: ", unit.dataset.adUnitId);
+    console.log("add unittt idd: ", unit.dataset.adUnitId);
   });
 }
