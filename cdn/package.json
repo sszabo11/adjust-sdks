@@ -43,5 +43,6 @@
     ],
     "prepareCmd": "npm run build",
     "publishCmd": "npm run deploy"
-  }
+  },
+  "gitHead": "6afe806eaa32c552adc4db12872d19199ac06399"
 }

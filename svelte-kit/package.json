@@ -61,7 +61,7 @@
     "vitest": "^3.0.0"
   },
   "dependencies": {
-    "adjust-core": "^1.2.8"
+    "adjust-core": "^1.2.7"
   },
   "release": {
     "branches": [
@@ -74,5 +74,6 @@
       "@semantic-release/github",
       "semantic-release-monorepo"
     ]
-  }
+  },
+  "gitHead": "6afe806eaa32c552adc4db12872d19199ac06399"
 }
