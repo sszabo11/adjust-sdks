@@ -6,8 +6,7 @@
   "module": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "nx tsc",
-    "all:build": "tsc && npm link && cd.. && cd svelte-kit && npm link"
+    "build": "nx tsc"
   },
   "exports": {
     ".": {
