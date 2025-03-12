@@ -6,10 +6,7 @@
     "build": "echo ed"
   },
   "workspaces": [
-    "cdn",
-    "svelte-kit",
-    "react",
-    "core"
+    "packages/*"
   ],
   "repository": {
     "type": "git",
@@ -23,6 +20,9 @@
   "homepage": "https://github.com/sszabo11/adjust-sdks#readme",
   "description": "",
   "devDependencies": {
+    "@nx/eslint": "20.5.0",
+    "@nx/rollup": "20.5.0",
+    "@nx/vite": "20.5.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/exec": "^7.0.3",
     "@semantic-release/git": "^10.0.1",
@@ -30,11 +30,8 @@
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
     "lerna": "^8.2.1",
-    "semantic-release": "^24.2.3",
-    "semantic-release-monorepo": "^8.0.2",
     "nx": "20.5.0",
-    "@nx/rollup": "20.5.0",
-    "@nx/eslint": "20.5.0",
-    "@nx/vite": "20.5.0"
+    "semantic-release": "^24.2.3",
+    "semantic-release-monorepo": "^8.0.2"
   }
 }

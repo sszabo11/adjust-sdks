@@ -53,7 +53,7 @@
 
 			let errors = unit.get_errors();
 
-			console.log('errors ad ', errors);
+			console.log('errors add ', errors);
 			if (errors.length > 0) {
 				error = errors[0];
 			}

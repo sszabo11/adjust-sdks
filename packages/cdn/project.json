@@ -1,0 +1,29 @@
+{
+  "name": "cdn",
+  "sourceRoot": "packages/cdn/src",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "packages/cdn/jest.config.js"
+      }
+    },
+    "build": {
+      "executor": "@nx/rollup:rollup",
+      "options": {
+        "main": "packages/cdn/src/index.js",
+        "outputPath": "dist/packages/cdn"
+      }
+    },
+    "deploy": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "tsx scripts/deploy.ts"
+      },
+      "dependsOn": [
+        "build"
+      ]
+    }
+  }
+}

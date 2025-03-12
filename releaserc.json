@@ -1,0 +1,54 @@
+{
+  "branches": [
+    "main"
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false,
+        "pkgRoot": "packages/cdn"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true,
+        "pkgRoot": "packages/svelte-kit"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true,
+        "pkgRoot": "packages/react"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true,
+        "pkgRoot": "packages/core"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "cd packages/cdn && nx deploy cdn"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "packages/cdn/package.json",
+          "packages/svelte-kit/package.json",
+          "packages/react/package.json",
+          "packages/core/package.json"
+        ]
+      }
+    ]
+  ]
+}

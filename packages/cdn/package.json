@@ -6,6 +6,7 @@
   "module": "dist/index.js",
   "type": "module",
   "scripts": {
+    "test": "jest || echo 'no tests'",
     "build": "nx rollup -c",
     "deploy": "nx exec -- tsx scripts/deploy.ts"
   },

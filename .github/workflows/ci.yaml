@@ -10,23 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
+          fetch-depth: 0  # Full history for Nx and semantic-release
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npx nx affected --target=test --parallel --max-parallel=3
-      - run: npx nx affected --target=build --parallel --max-parallel=3
-      - run: npx nx affected --target=deploy --parallel --max-parallel=3
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npx nx affected --target=test --parallel --max-parallel=3
+
+      - name: Run Builds
+        run: npx nx affected --target=build --parallel --max-parallel=3
+
+      - name: Version and Deploy
+        run: npx semantic-release
         env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Commit Version Changes
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add libs/*/package.json
-          git commit -m "chore: update versions [skip ci]" || echo "No changes"
-          git push
