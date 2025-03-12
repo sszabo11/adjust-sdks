@@ -1,6 +1,6 @@
 {
   "name": "adjust-svelte-test",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run prepack",
@@ -61,7 +61,7 @@
     "vitest": "^3.0.0"
   },
   "dependencies": {
-    "adjust-core": "^1.2.7"
+    "adjust-core": "^1.2.9"
   },
   "release": {
     "branches": [
