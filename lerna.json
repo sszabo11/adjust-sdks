@@ -1,10 +1,9 @@
 {
   "packages": [
-    "cdn",
-    "core",
-    "svelte-kit",
-    "react"
+    "cdn/*",
+    "core/*",
+    "svelte-kit/*",
+    "react/*"
   ],
-  "version": "independent",
-  "npmClient": "npm"
+  "version": "independent"
 }
