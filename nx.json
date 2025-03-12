@@ -1,17 +1,20 @@
-  {
-    "extends": "nx/presets/npm.json",
-    "tasksRunnerOptions": {
-      "default": {
-        "runner": "nx/tasks-runners/default",
-        "options": {
-          "cacheableOperations": [
-            "build",
-            "test"
-          ]
-        }
-      }
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "cache": true
     },
-    "affected": {
-      "defaultBase": "main"
+    "deploy": {
+      "dependsOn": [
+        "^deploy"
+      ]
     }
-  }
+  },
+  "nxCloudId": "67d1006aff7d6c73b95fa01b"
+}
